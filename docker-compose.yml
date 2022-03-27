@@ -5,7 +5,6 @@ services:
 # DATABASE SERVICE
 ######################################################
 
-  # DATABASE MYSQL: FOR DATA INGESTION
   mysql:
     image: wesleywillians/mysql-kafka-connect:latest
     command: --innodb-use-native-aio=0
