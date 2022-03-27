@@ -1,0 +1,13 @@
+docs/
+data/
+.DS_Store
+mnt/kafka
+mnt/postgres
+mnt/spark
+mnt/mysql
+mnt/mongo
+*.pyc
+*.csv
+*.txt
+*.json
+.env
