@@ -1,6 +1,5 @@
 # Base Image
 FROM spark-base:latest
-LABEL maintainer="MarcLamberti"
 
 # Arguments that can be set with docker build
 ARG AIRFLOW_VERSION=2.1.4
@@ -50,8 +49,9 @@ RUN pip install --upgrade "pip==20.2.4" && \
     pip install apache-airflow-providers-apache-spark==2.0.1 && \
     pip install apache-airflow-providers-slack==4.0.1 && \
     pip install apache-airflow-providers-http==2.0.1 && \
-    pip install psycopg2 tweepy kafka-python SQLAlchemy pandas pymysql
+    pip install apache-airflow-providers-docker==2.1.0
 
+RUN pip install psycopg2
 
 # Copy the airflow.cfg file (config)
 #COPY ./config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
@@ -63,8 +63,8 @@ RUN chown -R airflow: ${AIRFLOW_HOME}
 COPY ./start-airflow.sh ./start-airflow.sh
 
 # Set the entrypoint.sh file to be executable
-RUN chmod +x ./start-airflow.sh
 
+RUN chmod +x ./start-airflow.sh
 # Set the username to use
 USER airflow
 
