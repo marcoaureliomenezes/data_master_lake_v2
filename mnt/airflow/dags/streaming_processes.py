@@ -20,43 +20,59 @@ with DAG("streaming_processes_pipeline", start_date=datetime(2021,1,1), schedule
         bash_command="""sleep 2"""
     )
 
+
     streaming_bills_operations= DockerOperator(
         task_id="streaming_bills_operations",
+        container_name="streaming_bills_operations",
         image="marcoaureliomenezes/streamers:1.0",
         command="python streaming_bills.py --host kafka --port 9092 --freq 1 --num_clients 1000000",
         docker_url="unix:///var/run/docker.sock",
+        auto_remove=True,
+        mount_tmp_dir=False,
         network_mode='airflow-network'
     )
 
     streaming_CDBs_operations= DockerOperator(
         task_id="streaming_CDBs_operations",
+        container_name="streaming_CDBs_operations",
         image="marcoaureliomenezes/streamers:1.0",
         command="python streaming_CDBs.py --host kafka --port 9092 --freq 1 --num_clients 1000000",
         docker_url="unix:///var/run/docker.sock",
+        auto_remove=True,
+        mount_tmp_dir=False,
         network_mode='airflow-network'
     )
 
     streaming_credCard_operations= DockerOperator(
         task_id="streaming_credCard_operations",
+        container_name="streaming_credCard_operations",
         image="marcoaureliomenezes/streamers:1.0",
         command="python streaming_creditcard.py --host kafka --port 9092 --freq 1 --num_clients 1000000",
         docker_url="unix:///var/run/docker.sock",
+        auto_remove=True,
+        mount_tmp_dir=False,
         network_mode='airflow-network'
     )
 
     streaming_pix_operations= DockerOperator(
         task_id="streaming_pix_operations",
+        container_name="streaming_pix_operations",
         image="marcoaureliomenezes/streamers:1.0",
         command="python streaming_pix.py --host kafka --port 9092 --freq 1 --num_clients 1000000",
         docker_url="unix:///var/run/docker.sock",
+        auto_remove=True,
+        mount_tmp_dir=False,
         network_mode='airflow-network'
     )
 
     streaming_stocks_operations= DockerOperator(
         task_id="streaming_stocks_operations",
+        container_name="streaming_stocks_operations",
         image="marcoaureliomenezes/streamers:1.0",
         command="python streaming_stocks.py --host kafka --port 9092 --freq 1 --num_clients 1000000",
         docker_url="unix:///var/run/docker.sock",
+        auto_remove=True,
+        mount_tmp_dir=False,
         network_mode='airflow-network'
     )
 

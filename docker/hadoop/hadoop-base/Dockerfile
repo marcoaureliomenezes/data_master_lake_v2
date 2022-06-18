@@ -1,5 +1,4 @@
 FROM openjdk:8-jdk-slim-buster
-LABEL maintainer="MarcLamberti"
 
 ENV HADOOP_VERSION=3.1.1
 ENV HADOOP_HOME=/opt/hadoop

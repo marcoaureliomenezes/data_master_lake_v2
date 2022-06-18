@@ -23,18 +23,24 @@ with DAG("batch_processes_pipeline", start_date=datetime(2021,1,1), schedule_int
 
     batch_random_data= DockerOperator(
         task_id="batch_random_data",
+        container_name="batch_random_data",
         image="marcoaureliomenezes/batcher:1.0",
         command="python python/gen_fake_data.py --user root --password root --host mysql --port 3306 --db data_master --size 10000",
         docker_url="unix:///var/run/docker.sock",
+        auto_remove=True,
+        mount_tmp_dir=False,
         network_mode='airflow-network'
     )
 
 
     batch_market_operator= DockerOperator(
         task_id="batch_market_operator",
+        container_name="batch_market_operator",  
         image="marcoaureliomenezes/batcher:1.0",
         command="python python/get_daily_markets.py --user root --password root --host mysql --port 3306 --db data_master --period max",
         docker_url="unix:///var/run/docker.sock",
+        auto_remove=True,
+        mount_tmp_dir=False,
         network_mode='airflow-network'
     )
 

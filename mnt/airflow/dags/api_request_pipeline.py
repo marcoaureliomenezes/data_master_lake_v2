@@ -29,9 +29,12 @@ with DAG(
 
     get_assets_data_from_api= DockerOperator(
         task_id="get_assets_data_from_api",
+        container_name="get_assets_data_from_api",
         image="marcoaureliomenezes/batcher:1.0",
         command="python python/get_10min_markets.py --host kafka --port 9092 --topic assets_from_api",
         docker_url="unix:///var/run/docker.sock",
+        auto_remove=True,
+        mount_tmp_dir=False,
         network_mode='airflow-network'
     )
 

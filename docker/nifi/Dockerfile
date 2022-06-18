@@ -1,8 +1,5 @@
-FROM spark-base:latest
+FROM apache/nifi:1.11.4
 
-RUN mkdir /downloads/apache-nifi -p
-RUN cd /downloads/apache-nifi
-RUN wget https://dlcdn.apache.org/nifi/1.16.1/nifi-1.16.1-bin.tar.gz
+RUN mkdir -p hadoop
 
-
-RUN tar -xvzf nifi-1.16.1-bin.tar.gz
+COPY ./conf hadoop/
