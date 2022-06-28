@@ -83,8 +83,21 @@ with DAG("hive_tables_creation_pipeline", start_date=datetime(2021,1,1), schedul
         hql=create_daily_stock_markets_table
     )
 
-    start_create_tables >> create_client_accounts_table >> create_assets_stockmarkets_table >> create_conta_corrente_table >> end_create_tables
+    create_metadata_oracles_table = HiveOperator(
+        task_id="create_metadata_oracles_table",
+        hive_cli_conn_id="hive_conn",
+        hql=create_metadata_oracle_prices
+    )
+
+    create_pricefeed_oracles_table = HiveOperator(
+        task_id="create_pricefeed_oracles_table",
+        hive_cli_conn_id="hive_conn",
+        hql=create_oracle_pricefeeds
+    )
+
+
+    start_create_tables >> create_metadata_oracles_table >> create_client_accounts_table >> create_assets_stockmarkets_table >> create_conta_corrente_table >> end_create_tables
     
-    start_create_tables  >> create_poupanca_table >> create_seguros_table >> create_consorcio_table >> end_create_tables
+    start_create_tables  >> create_pricefeed_oracles_table >> create_poupanca_table >> create_seguros_table >> create_consorcio_table >> end_create_tables
     
     start_create_tables >> create_renda_fixa_table >> create_renda_variavel_table >> create_titulos_table >> create_derivativos_table >> end_create_tables

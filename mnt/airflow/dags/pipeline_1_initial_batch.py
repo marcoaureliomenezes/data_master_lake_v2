@@ -16,6 +16,8 @@ default_args ={
     "retry_delay": timedelta(minutes=5) 
 }
 
+PATH_YAHOO_TICKERS = '/opt/airflow/dags/metadata/yahoo_tickers.csv'
+
 def gen_assets_jobs_attributes(asset_group, file_path):
     with open(file_path, 'r') as file:
         reader = csv.reader(file, delimiter=";")
@@ -58,7 +60,7 @@ with DAG("initial_batch_pipeline", start_date=datetime(2021,1,1), schedule_inter
     create_client_accounts= DockerOperator(
         task_id="create_client_accounts",
         container_name="create_client_accounts",
-        entrypoint="python gen_client_accounts.py size=10000 database=rand_engine_data table=cli_accounts".split(" "),
+        entrypoint="python gen_client_accounts.py size=100000 database=rand_engine_data table=cli_accounts".split(" "),
         **COMMON_PARMS
     )
 
@@ -128,32 +130,32 @@ with DAG("initial_batch_pipeline", start_date=datetime(2021,1,1), schedule_inter
     )
   
     asset_group_markets= DockerOperator(
-        **gen_assets_jobs_attributes('markets', '/opt/airflow/dags/metadata/yahoo_tickers.csv'),  
+        **gen_assets_jobs_attributes('markets', PATH_YAHOO_TICKERS),  
         **COMMON_PARMS
     )
 
     asset_group_ibovespa= DockerOperator(
-        **gen_assets_jobs_attributes('ibovespa', '/opt/airflow/dags/metadata/yahoo_tickers.csv'),  
+        **gen_assets_jobs_attributes('ibovespa', PATH_YAHOO_TICKERS),  
         **COMMON_PARMS
     )
 
     asset_group_big_techs= DockerOperator(
-        **gen_assets_jobs_attributes('big_techs', '/opt/airflow/dags/metadata/yahoo_tickers.csv'),  
+        **gen_assets_jobs_attributes('big_techs', PATH_YAHOO_TICKERS),  
         **COMMON_PARMS
     )
 
     asset_group_commodities= DockerOperator(
-        **gen_assets_jobs_attributes('commodities', '/opt/airflow/dags/metadata/yahoo_tickers.csv'), 
+        **gen_assets_jobs_attributes('commodities', PATH_YAHOO_TICKERS), 
         **COMMON_PARMS
     )
 
     asset_group_crypto= DockerOperator(
-        **gen_assets_jobs_attributes('crypto', '/opt/airflow/dags/metadata/yahoo_tickers.csv'),  
+        **gen_assets_jobs_attributes('crypto', PATH_YAHOO_TICKERS),  
         **COMMON_PARMS
     )
 
     asset_group_stablecoins= DockerOperator(
-        **gen_assets_jobs_attributes('stablecoins', '/opt/airflow/dags/metadata/yahoo_tickers.csv'),  
+        **gen_assets_jobs_attributes('stablecoins', PATH_YAHOO_TICKERS),  
         **COMMON_PARMS
     )
 

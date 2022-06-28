@@ -43,9 +43,12 @@ with DAG("delete_hive_databases", start_date=datetime(2021,1,1), schedule_interv
         hql=deleting_daily_markets_database
     )
 
+    delete_oracles_database = HiveOperator(
+        task_id="delete_oracles_database",
+        hive_cli_conn_id="hive_conn",
+        hql=deleting_oracles_database
+    )
 
 
-
-
-    start_create_tables  >> delete_client_database >> delete_products_database >> delete_daily_markets_database >> end_create_tables
+    start_create_tables  >> delete_client_database >> delete_oracles_database >> delete_products_database >> delete_daily_markets_database >> end_create_tables
     

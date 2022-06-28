@@ -48,5 +48,19 @@ with DAG("spark_jobs_pipeline", start_date=datetime(2021,1,1), schedule_interval
         verbose=False
     )
 
+    ingesting_oracle_metadata = SparkSubmitOperator(
+        task_id="ingesting_oracle_metadata",
+        application="/opt/airflow/dags/scripts/spark/oracle_metadata_ingestion.py",
+        conn_id="spark_conn",
+        verbose=False
+    )
 
-    start_batch_20min >> ingesting_client_accounts >> ingesting_client_products >> ingesting_daily_markets >> end_batch_20min 
+
+    ingesting_oracle_prices = SparkSubmitOperator(
+        task_id="ingesting_oracle_prices",
+        application="/opt/airflow/dags/scripts/spark/oracle_prices_ingestion.py",
+        conn_id="spark_conn",
+        verbose=False
+    )
+
+    start_batch_20min >> ingesting_client_accounts >> ingesting_client_products >> ingesting_daily_markets >> ingesting_oracle_prices >> ingesting_oracle_metadata >> end_batch_20min 

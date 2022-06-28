@@ -367,3 +367,24 @@ A figura abaixo lustra tabelas de ativos gravados ao longo dos últimos dias
 
 
 
+A partir dos dados ingestados no HDFS foram criados 3 databases HIVE com suas respectivas tabelas descritas abaixo.
+
+
+
+* **Clients**
+  * tabela clients: Contem contas de clientes.
+
+* **products**
+
+  * tabela conta_corrente: Contem dados de clientes do banco que utilizam o produto conta corrente.
+  * tabela poupanca: Contem dados de clientes do banco que utilizam o produto poupanca.
+  * tabela consorcio: Contem dados de clientes do banco que utilizam o produto consorcio.
+  * tabela seguros: Contem dados de clientes do banco que utilizam o produto seguros.
+  * tabela renda_fixa: Contem dados de clientes do banco que utilizam o produto renda_fixa.
+  * tabela renda_variavel: Contem dados de clientes do banco que utilizam o produto renda_variavel.
+  * tabela titulos: Contem dados de clientes do banco que utilizam o produto titulos.
+  * tabela derivativos: Contem dados de clientes do banco que utilizam o produto derivativos.
+
+* **Daily_stock_markets**:
+  * 
+* **Oracles**

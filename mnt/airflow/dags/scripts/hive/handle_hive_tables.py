@@ -119,6 +119,7 @@ create_product_derivativos_table="""
 create_daily_stock_markets_table="""
             CREATE DATABASE IF NOT EXISTS daily_stock_markets;
             CREATE TABLE IF NOT EXISTS daily_stock_markets.assets (
+                symbol string,
                 data string,
                 high double,
                 open double,
@@ -126,11 +127,42 @@ create_daily_stock_markets_table="""
                 volume bigint,
                 low double,
                 adjclose double)
-            PARTITIONED BY(symbol string)
+            PARTITIONED BY(asset_group string)
             ROW FORMAT DELIMITED
             FIELDS TERMINATED BY ','
             STORED AS TEXTFILE
         """
+
+
+create_metadata_oracle_prices="""
+            CREATE DATABASE IF NOT EXISTS oracles;
+            CREATE TABLE IF NOT EXISTS oracles.metadata_pricefeeds (
+                table_name string,
+                network string,
+                pair string,
+                address string,
+                phase_id bigint,
+                decimals bigint,
+                description string)
+            ROW FORMAT DELIMITED
+            FIELDS TERMINATED BY ','
+            STORED AS TEXTFILE
+        """
+
+create_oracle_pricefeeds="""
+            CREATE DATABASE IF NOT EXISTS oracles;
+            CREATE TABLE IF NOT EXISTS oracles.pricefeeds (
+                round_id string,
+                answeredInRound string,
+                started_at double,
+                updated_at double,
+                price double)
+            PARTITIONED BY(pair string, network string)
+            ROW FORMAT DELIMITED
+            FIELDS TERMINATED BY ','
+            STORED AS TEXTFILE
+        """
+
 
 
 
@@ -154,5 +186,11 @@ deleting_clients_database="""
 deleting_daily_markets_database="""
             DROP TABLE IF EXISTS daily_stock_markets.assets;
             DROP DATABASE IF EXISTS daily_stock_markets;
+        """
+
+deleting_oracles_database="""
+            DROP TABLE IF EXISTS oracles.metadata_pricefeeds;
+            DROP TABLE IF EXISTS oracles.pricefeeds;
+            DROP DATABASE IF EXISTS oracles;
         """
 

@@ -1,8 +1,7 @@
 from os.path import abspath
 
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col
-from pyspark.sql.types import StructType, StructField, IntegerType, StringType
+from pyspark.sql.functions import lit
 
 warehouse_location = abspath('spark-warehouse')
 
@@ -16,14 +15,15 @@ spark = SparkSession \
     .getOrCreate()
 
 spark.sparkContext.setLogLevel('ERROR')
+spark.conf.set("hive.exec.dynamic.partition.mode", "nonstrict")
 
-
-def ingest_product(product_name):
-    df = spark.read.parquet(f'hdfs://namenode:9000/daily_markets/{product_name}')
+def ingest_product(asset_group):
+    df = spark.read.parquet(f'hdfs://namenode:9000/daily_markets/{asset_group}')
 
     df = df.withColumnRenamed("date", "data")
+    df = df.withColumn("asset_group", lit(asset_group))
     df.printSchema()
-    df.write.mode("append").insertInto(f"products.{product_name}", overwrite=False)
+    df.write.mode("append").insertInto(f"daily_stock_markets.assets", overwrite=False)
 
 
 asset_groups = ["big_techs", "commodities", "crypto", "ibovespa", "markets", "stablecoins"]
