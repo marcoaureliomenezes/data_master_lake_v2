@@ -1,16 +1,15 @@
 import csv
-
 from airflow import DAG
 from datetime import datetime, timedelta
 from airflow.operators.bash import BashOperator
 from airflow.providers.docker.operators.docker import DockerOperator
-from docker.types import Mount
+
 
 def form_func_call(pair, network):
     with open('/opt/airflow/dags/metadata/ftm-main.csv', 'r') as file:
         reader = csv.reader(file, delimiter=";")
         arr = [row for row in reader]
-    function_call = "brownie run scripts/get_asset.py main mysql root root".split(" ")
+    function_call = "brownie run scripts/get_asset.py main".split(" ")
     function_call.extend(list(filter(lambda x: x[0] == pair, arr))[0])
     function_call.extend(["--network", network])
     var_parms = dict(
@@ -34,8 +33,12 @@ default_args ={
 BASEPATH = "/opt/airflow/dags/"
 
 COMMON_PARMS = dict(
-        image="marcoaureliomenezes/chainwatcher:1.2",
-        environment={'WEB3_INFURA_PROJECT_ID':'1f6c5d7a4b6b4b5fa11d285a5ed2f552'},
+        image="marcoaureliomenezes/chainwatcher:1.3",
+        environment={
+            'MYSQL_SERVICE': 'mysql',
+            'MYSQL_USER': 'root',
+            'MYSQL_PASS': 'root',
+        },
         api_version='auto', 
         docker_url="unix:///var/run/docker.sock",
         network_mode='airflow-network',

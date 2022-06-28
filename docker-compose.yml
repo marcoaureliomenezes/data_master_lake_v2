@@ -32,15 +32,15 @@ services:
       interval: 10s
       retries: 10
 
-  mongo:
-    image: mongo:latest
-    container_name: db_mongo
-    environment:
-      - PUID=1000
-      - PGID=1000
-    restart: unless-stopped
-    ports:
-      - "2717:27017"
+  # mongo:
+  #   image: mongo:latest
+  #   container_name: db_mongo
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #   restart: unless-stopped
+  #   ports:
+  #     - "2717:27017"
 
   # DATABASE POSTGRES: FOR AIRFLOW (SPOORTS LOCAL EXECUTOR)    
   postgres:
@@ -54,8 +54,8 @@ services:
         max-size: "10m"
     ports:
       - "32769:5432"
-    # volumes:
-    #   - ./mnt/postgres:/var/lib/postgresql/data/pgdata
+    volumes:
+      - ./mnt/postgres:/var/lib/postgresql/data/pgdata
     environment:
       - POSTGRES_USER=airflow
       - POSTGRES_PASSWORD=airflow
@@ -120,28 +120,6 @@ services:
       - SERVICE_PRECONDITION=namenode:9870
     healthcheck:
       test: [ "CMD", "nc", "-z", "datanode1", "9864" ]
-      timeout: 45s
-      interval: 10s
-      retries: 10
-
-  # DATANODE HADOOP (Contains the metadata)
-  datanode2:
-    build: ./docker/hadoop/hadoop-datanode
-    restart: always
-    container_name: hadoop-datanode2
-    logging:
-      driver: "json-file"
-      options:
-        max-file: "5"
-        max-size: "10m"
-    depends_on:
-      - namenode
-    volumes:
-      - ./mnt/hadoop/datanode:/hadoop/dfs/data
-    environment:
-      - SERVICE_PRECONDITION=namenode:9870
-    healthcheck:
-      test: [ "CMD", "nc", "-z", "datanode2", "9865" ]
       timeout: 45s
       interval: 10s
       retries: 10

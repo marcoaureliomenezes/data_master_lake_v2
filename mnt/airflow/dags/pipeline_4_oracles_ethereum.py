@@ -1,25 +1,23 @@
 import csv
-
 from airflow import DAG
 from datetime import datetime, timedelta
 from airflow.operators.bash import BashOperator
 from airflow.providers.docker.operators.docker import DockerOperator
 from docker.types import Mount
 
+
 def form_func_call(pair, network):
     with open('/opt/airflow/dags/metadata/mainnet.csv', 'r') as file:
         reader = csv.reader(file, delimiter=";")
         arr = [row for row in reader]
-    function_call = "brownie run scripts/get_asset.py main mysql root root".split(" ")
+    function_call = "brownie run scripts/get_asset.py main".split(" ")
     function_call.extend(list(filter(lambda x: x[0] == pair, arr))[0])
     function_call.extend(["--network", network])
-    var_parms = dict(
+    return dict(
         entrypoint=function_call,
         task_id=f"{pair}_chain_data_{network}",
         container_name=f"{pair}_chain_data_{network}",
     )
-    return var_parms
-
 
 
 default_args ={
@@ -31,11 +29,15 @@ default_args ={
     "retry_delay": timedelta(minutes=5) 
 }
 
-BASEPATH = "/opt/airflow/dags/"
 
 COMMON_PARMS = dict(
-        image="marcoaureliomenezes/chainwatcher:1.2",
-        environment={'WEB3_INFURA_PROJECT_ID':'1f6c5d7a4b6b4b5fa11d285a5ed2f552'},
+        image="marcoaureliomenezes/chainwatcher:1.3",
+        environment={
+            'WEB3_INFURA_PROJECT_ID':'1f6c5d7a4b6b4b5fa11d285a5ed2f552',
+            'MYSQL_SERVICE': 'mysql',
+            'MYSQL_USER': 'root',
+            'MYSQL_PASS': 'root',
+        },
         api_version='auto', 
         docker_url="unix:///var/run/docker.sock",
         network_mode='airflow-network',
@@ -88,12 +90,14 @@ with DAG(
     start_batch_20min >> btc_usd_job >> sol_usd_job >> bnb_usd_job >> ada_usd_job >> avax_usd_job >> end_batch_20min
 
     
-    start_batch_20min >> eth_usd_job >> link_usd_job >> dot_usd_job >> matic_usd_job >> doge_usd_job >> ftm_eth_job >> end_batch_20min
+    start_batch_20min >> eth_usd_job >> link_usd_job >> dot_usd_job >> matic_usd_job  >> end_batch_20min
 
 
-    start_batch_20min >> aave_eth_job >> aave_usd_job >> dydx_usd_job >> end_batch_20min
+    start_batch_20min >> doge_usd_job >> aave_eth_job >> aave_usd_job >> dydx_usd_job >> end_batch_20min
 
     start_batch_20min >> dai_usd_job >> busd_usd_job >> usdc_usd_job >> usdt_usd_job >> wbtc_btc_job >> end_batch_20min
 
-    start_batch_20min >> amzn_usd_job >> aapl_usd_job >> googl_usd_job >> tsla_usd_job >> oil_usd_job >> silver_usd_job >> gold_usd_job >> end_batch_20min
+    start_batch_20min >> ftm_eth_job >> oil_usd_job >> silver_usd_job >> gold_usd_job >>  end_batch_20min
+
+    start_batch_20min >> amzn_usd_job >> aapl_usd_job >> googl_usd_job >> tsla_usd_job >> end_batch_20min
 
